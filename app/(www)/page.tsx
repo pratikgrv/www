@@ -1,5 +1,11 @@
-import Image from "next/image";
+import { activeVersion } from "../portfolio-data";
+import HomeV1 from "../versions/v1";
+
+const designVersions: Record<string, React.ComponentType> = {
+  v1: HomeV1,
+};
 
 export default function Home() {
-	return <main>yo!</main>;
+  const ActiveLayout = designVersions[activeVersion] || HomeV1;
+  return <ActiveLayout />;
 }
