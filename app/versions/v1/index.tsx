@@ -4,7 +4,7 @@ import Link from "next/link";
 
 // 1. Reusable Avatar Component
 const Avatar = ({ avatar, name }: { avatar: string; name: string }) => {
-  const sizeClass = "h-12 w-12 border border-gray-200 rounded-full";
+  const sizeClass = "h-12 w-12 border border-gray-200 ";
   if (avatar.startsWith("/") || avatar.startsWith("http") || avatar.startsWith("data:")) {
     return (
       <img
@@ -28,12 +28,12 @@ const AppGrid = ({ apps, isMobile = false }: { apps: typeof data.apps; isMobile?
       <a
         key={`${app.name}-${isMobile ? "mobile-" : ""}${index}`}
         href={app.url}
-        className="aspect-square flex flex-col items-center justify-center p-2 border border-gray-200 rounded hover:bg-gray-50 transition-colors"
+        className="aspect-square flex flex-col items-center justify-center p-2 hover:bg-gray-50 transition-colors"
       >
         <img
           src={app.icon}
           alt={app.name}
-          className="w-10 h-10 object-contain"
+          className="w-12 h-12 object-contain"
         />
         <span className="mt-2 text-xs text-gray-500 text-center">
           {app.name}

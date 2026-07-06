@@ -28,8 +28,8 @@ export const portfolioVersions: Record<string, PortfolioVersion> = {
       avatar: "/icons/profile.jpg", // Can be a string, emoji, or path to an image like "/avatar.png"
     },
     links: [
-      { name: "X", url: "https://x.com/pratikgrv", label: "X" },
-      { name: "Mail", url: "mailto:pratik@example.com", label: "Mail" },
+      { name: "X", url: "https://x.com/pratik_grv", label: "X" },
+      { name: "Mail", url: "mailto:pratikgaurav37@gmail.com", label: "Mail" },
       { name: "GitHub", url: "https://github.com/pratikgrv", label: "GitHub" },
     ],
     apps: [
