@@ -1,31 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono,Inter } from "next/font/google";
-import "@/styles/globals.css"
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+import localFont from "next/font/local";
+import "@/styles/globals.css";
+const interTight = localFont({
+  src: "../public/fonts/inter-tight-latin-variable.woff2",
+  variable: "--font-inter-tight",
+  weight: "300 500",
+  display: "swap",
 });
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-export const metadata: Metadata = {
-  title: "pratik grv",
-  description: "yo!",
-};
-
+export const metadata: Metadata = { title: "pratik grv", description: "yo!" };
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${interTight.variable} antialiased`}>
+        <a href="#main-content" className="skip-link pill">
+          Skip to content
+        </a>
         {children}
       </body>
     </html>

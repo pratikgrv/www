@@ -1,208 +1,129 @@
-import { data } from "../../portfolio-data";
-import { posts, Post } from "@/.velite";
+import Image from "next/image";
 import Link from "next/link";
+import { posts } from "@/.velite";
+import { data } from "../../portfolio-data";
+import { SocialIcon } from "@/components/social-icon";
 
-// 1. Reusable Avatar Component
-const Avatar = ({ avatar, name }: { avatar: string; name: string }) => {
-  const sizeClass = "h-12 w-12 border border-gray-200 ";
-  if (avatar.startsWith("/") || avatar.startsWith("http") || avatar.startsWith("data:")) {
-    return (
-      <img
-        src={avatar}
-        alt={name}
-        className={`${sizeClass} object-cover`}
-      />
-    );
-  }
-  return (
-    <div className={`${sizeClass} flex items-center justify-center text-2xl bg-gray-50`}>
-      {avatar}
-    </div>
-  );
-};
-
-// 2. Reusable App Grid Component
-const AppGrid = ({ apps, isMobile = false }: { apps: typeof data.apps; isMobile?: boolean }) => (
-  <div className="grid grid-cols-3 gap-2 p-2">
-    {apps.map((app, index) => (
-      <a
-        key={`${app.name}-${isMobile ? "mobile-" : ""}${index}`}
-        href={app.url}
-        className="aspect-square flex flex-col items-center justify-center p-2 hover:bg-gray-50 transition-colors"
-      >
-        <img
-          src={app.icon}
-          alt={app.name}
-          className="w-12 h-12 object-contain"
-        />
-        <span className="mt-2 text-xs text-gray-500 text-center">
-          {app.name}
-        </span>
-      </a>
-    ))}
-  </div>
-);
-
-// 3. Reusable Post List Component
-const PostList = ({
-  posts,
-  formatDate,
-  isMobile = false,
-}: {
-  posts: Post[];
-  formatDate: (dateStr: string) => string;
-  isMobile?: boolean;
-}) => (
-  <div className={`space-y-1 ${isMobile ? "p-2" : "p-1 overflow-y-auto"}`}>
-    {posts.map((post) => (
-      <Link key={post.slug} href={`/${post.slug}`} className="block group">
-        <article className={isMobile ? "pb-3 last:pb-0" : "p-1 rounded hover:bg-gray-50 transition-colors"}>
-          <span className="text-xs text-gray-500">{formatDate(post.date)}</span>
-          <h3 className="font-semibold text-black mt-0.5 group-hover:underline">
-            {post.title}
-          </h3>
-          <p className="text-sm text-gray-700 mt-1 leading-relaxed">
-            {post.excerpt}
-          </p>
-        </article>
-      </Link>
-    ))}
-  </div>
-);
+const dateFormatter = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+  timeZone: "UTC",
+});
 
 export default function HomeV1() {
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      timeZone: "UTC",
-    });
-  };
-
-  // Sort posts by date descending
   const sortedPosts = [...posts].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    (a, b) => Date.parse(b.date) - Date.parse(a.date),
   );
-
   return (
-    <div className="bg-white text-black min-h-screen font-serif flex items-center justify-center p-4">
-      
-      {/* Web Layout (Desktop / Tablet) */}
-      <div className="hidden md:flex min-h-[500px] w-full max-w-5xl border border-gray-200">
-        
-        {/* Profile Sidebar */}
-        <aside className="flex w-64 flex-col justify-between border-r border-gray-200">
+    <main id="main-content" className="portfolio-shell">
+      <header className="profile">
+        <div className="profile-heading">
+          {data.info.avatar.startsWith("/") ? (
+            <Image
+              src={data.info.avatar}
+              alt={data.info.name}
+              width={64}
+              height={64}
+              priority
+              className="avatar"
+            />
+          ) : (
+            <span className="avatar avatar-fallback">{data.info.avatar}</span>
+          )}
           <div>
-            <header className="p-4">
-              <div className="flex items-center gap-3">
-                <Avatar avatar={data.info.avatar} name={data.info.name} />
-                <div>
-                  <h1 className="text-xl font-bold text-black">
-                    {data.info.name}
-                  </h1>
-                </div>
-              </div>
-              <p className="mt-4 text-sm text-gray-600 leading-relaxed">
-                {data.info.bio}
-              </p>
-            </header>
+            <h1>{data.info.name}</h1>
+            <p className="bio">{data.info.bio}</p>
           </div>
-
-          <nav className="mt-auto">
-            {data.links.map((link) => (
+        </div>
+        <nav aria-label="Social links" className="social-links">
+          {data.links.map((link) => (
+            <a
+              key={link.name}
+              href={link.url}
+              className={`pill social-pill ${link.url.startsWith("mailto:") ? "pill-primary" : ""}`}
+              title={link.label}
+              target={link.url.startsWith("http") ? "_blank" : undefined}
+              rel={
+                link.url.startsWith("http") ? "noopener noreferrer" : undefined
+              }
+            >
+              <SocialIcon name={link.name} />
+              <span>{link.label}</span>
+              {link.url.startsWith("http") ? (
+                <span className="sr-only"> (opens in a new tab)</span>
+              ) : null}
+            </a>
+          ))}
+        </nav>
+      </header>
+      <section aria-labelledby="apps-heading" className="portfolio-section">
+        <h2 id="apps-heading" className="section-heading">
+          Apps
+        </h2>
+        <div className="apps-grid">
+          {data.apps.map((app) => {
+            const content = (
+              <>
+                <div className="app-inset">
+                  <Image
+                    src={app.icon}
+                    alt=""
+                    width={72}
+                    height={72}
+                    className="app-icon"
+                  />
+                </div>
+                <div className="app-caption">
+                  <h3>{app.name}</h3>
+                  <span aria-hidden="true">{app.url === "#" ? "" : "↗"}</span>
+                </div>
+              </>
+            );
+            return app.url === "#" ? (
+              <article key={app.name} className="app-card">
+                {content}
+              </article>
+            ) : (
               <a
-                key={link.name}
-                href={link.url}
-                className="flex items-center text-sm justify-between p-2 border-t border-gray-200 text-black hover:bg-gray-50 transition-colors"
-                target="_blank"
-                rel="noopener noreferrer"
+                key={app.name}
+                className="app-card app-card-link"
+                href={app.url}
+                target={app.url.startsWith("http") ? "_blank" : undefined}
+                rel={
+                  app.url.startsWith("http") ? "noopener noreferrer" : undefined
+                }
               >
-                <span>{link.label}</span>
-                <span>→</span>
+                {content}
+                {app.url.startsWith("http") ? (
+                  <span className="sr-only">Opens in a new tab</span>
+                ) : null}
               </a>
-            ))}
-          </nav>
-        </aside>
-
-        {/* Apps Column */}
-        <section className="flex-1 border-r border-gray-200 flex flex-col">
-          <header className="border-b border-gray-200 p-3">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-black">
-              Apps
-            </h2>
-          </header>
-          <AppGrid apps={data.apps} />
-        </section>
-
-        {/* Posts Column */}
-        <section className="flex-1 flex flex-col">
-          <header className="border-b border-gray-200 p-3">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-black">
-              Posts
-            </h2>
-          </header>
-          <PostList posts={sortedPosts} formatDate={formatDate} />
-        </section>
-      </div>
-
-      {/* Mobile Layout */}
-      <div className="block md:hidden w-full max-w-md border border-gray-200 min-h-[600px] flex flex-col bg-white relative">
-        <main className="flex-1 flex flex-col">
-          
-          {/* Profile Section */}
-          <section className="sticky top-0 bg-white z-10 border-b border-gray-200">
-            <div className="flex items-center gap-4 p-4">
-              <Avatar avatar={data.info.avatar} name={data.info.name} />
-              <div>
-                <h1 className="text-xl font-bold text-black">
-                  {data.info.name}
-                </h1>
-              </div>
-            </div>
-            <p className="p-4 pt-0 text-sm text-gray-600 leading-relaxed">
-              {data.info.bio}
-            </p>
-          </section>
-
-          {/* Apps Section */}
-          <section className="border-b border-gray-200">
-            <header className="border-b border-gray-200 p-3">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-black">
-                APPS
-              </h2>
-            </header>
-            <AppGrid apps={data.apps} isMobile />
-          </section>
-
-          {/* Posts Section */}
-          <section className="flex-1">
-            <header className="border-b border-gray-200 p-3">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-black">
-                POSTS
-              </h2>
-            </header>
-            <PostList posts={sortedPosts} formatDate={formatDate} isMobile />
-          </section>
-
-          {/* Links Footer (Sticky inside the mobile container border box) */}
-          <footer className="sticky bottom-0 border-t border-gray-200 bg-white grid grid-cols-3 divide-x divide-gray-200 text-center z-10">
-            {data.links.map((link) => (
-              <a
-                key={`${link.name}-mobile`}
-                href={link.url}
-                className="p-3 text-sm font-medium text-black hover:bg-gray-50 transition-colors"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {link.label}
-              </a>
-            ))}
-          </footer>
-        </main>
-      </div>
-
-    </div>
+            );
+          })}
+        </div>
+      </section>
+      <section aria-labelledby="posts-heading" className="portfolio-section">
+        <h2 id="posts-heading" className="section-heading">
+          Posts
+        </h2>
+        <div className="post-list">
+          {sortedPosts.map((post) => (
+            <Link key={post.slug} href={`/${post.slug}`} className="post-row">
+              <article>
+                <time dateTime={post.date}>
+                  {dateFormatter.format(new Date(post.date))}
+                </time>
+                <h3>{post.title}</h3>
+                <p>{post.excerpt}</p>
+              </article>
+              <span className="post-arrow" aria-hidden="true">
+                ↗
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
+    </main>
   );
 }

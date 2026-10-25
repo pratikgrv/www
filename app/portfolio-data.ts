@@ -34,6 +34,13 @@ export const portfolioVersions: Record<string, PortfolioVersion> = {
     ],
     apps: [
       { name: "Upmint ai", icon: "/icons/logo.jpg", url: "#" },
+      // Sample apps for previewing how the grid wraps with more icons.
+      { name: "Browser demo", icon: "/icons/app1.svg", url: "#" },
+      { name: "Terminal demo", icon: "/icons/app2.svg", url: "#" },
+      { name: "Notes demo", icon: "/icons/app3.svg", url: "#" },
+      { name: "Tools demo", icon: "/icons/app4.svg", url: "#" },
+      { name: "Analytics demo", icon: "/icons/app5.svg", url: "#" },
+      { name: "Vault demo", icon: "/icons/app6.svg", url: "#" },
     ],
   },
 };
